@@ -1,0 +1,80 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv("Churn_Modelling.csv")
+df
+
+df.isnull().sum()
+
+df.info()
+
+df.dtypes
+
+df.columns
+
+df = df.drop(['RowNumber', 'CustomerId', 'Surname'], axis=1)
+
+df.head()
+
+# Visualization 
+def visualization(x, y, xlabel):
+    plt.figure(figsize=(10, 5))
+    plt.hist([x, y], color=['red', 'green'], label=['exit', 'notexit'])
+    plt.xlabel(xlabel, fontsize=20)
+    plt.ylabel("No. of customers", fontsize=20)
+    plt.legend()
+    plt.show()
+
+df_churn_exited = df[df['Exited'] == 1]['Tenure']
+df_churn_notexited = df[df['Exited'] == 0]['Tenure']
+
+visualization(df_churn_exited, df_churn_notexited, "Tenure")
+
+df_churn_exited = df[df['Exited'] == 1]['Age']
+df_churn_notexited = df[df['Exited'] == 0]['Age']
+
+visualization(df_churn_exited, df_churn_notexited, "Age")
+
+x = df[['CreditScore', 'Gender', 'Age', 'Tenure', 'Balance', 'NumberOfProducts', 'HasCrcard', 'IsActiveMember', 'EstimatedSalary', 'Exited']]
+states = pd.get_dummies(df['Geography'], drop_first=True)
+gender = pd.get_dummies(df['Gender'], drop_first=True)
+
+df = pd.concat([df, gender, states], axis=1)
+
+df.head()
+
+x = df[['CreditScore', 'Age', 'Tenure', 'Balance', 'NumOfProducts', 'HasCrCard', 'IsActiveMember', 'EstimatedSalary'] + list(gender.columns) + list(states.columns)]
+y = df['Exited']
+
+from sklearn.model_selection import train_test_split
+xtrain, xtest, ytrain, ytest = train_test_split(x, y, random_state=0, test_size=0.25)
+
+x.shape
+
+x_test.shape
+
+x_train
+
+x_train.shape
+
+# ANN model
+from sklearn.neural_network import MLPClassifier
+ann = MLPClassifier(hidden_layer_sizes=(100,100,100), random_state=0, max_iter=100, activation='relu')
+ann.fit(xtrain, ytrain)
+
+ypred = ann.predict(xtest)
+
+import sklearn
+
+from sklearn.metrics import ConfusionMatrixDisplay, classification_report, 
+from sklearn.metrics import accuracy_score
+
+y_test.value_counts()
+
+ConfusionMatrixDisplay.from_predictions(ytest, ypred)
+
+accuracy_score(y_test, y_pred))
+
+print(classification_report(y_test, y_pred))
