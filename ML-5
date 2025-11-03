@@ -1,0 +1,66 @@
+import pandas as pd 
+import seaborn as sns
+
+df = pd.read_csv(diabetes.csv)
+df
+
+x = df.drop('Outcome', axis = 1)
+y = df['Outcome']
+
+sns.countplot(x=y);
+
+y.value_counts()
+
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+x_scaled = scaler.fit_transform(x)
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test = train_test_split(x_scaled,y,random_state=0, test
+
+x.shape
+
+x_train.shape
+ 
+x_test.shape
+ 
+from sklearn.neighbors import KNeighborsClassifier
+
+knn =  KNeighborsClassifier(n_neighbors = 5)
+
+knn.fit(x_train, y_train)
+
+from sklearn.metrics import accuracy_score , ConfusionMatrixDisplay
+from sklearn.metrics import classification_report
+
+y_pred = knn.predict(x_test)
+
+ConfusionMatrixDisplay.from_predictions(y_test,y_pred)
+ 
+print(classification_report(y_test,y_pred))
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+error = []
+for k in range (1,41):
+    knn = KNeighborsClassifier(n_neighbors = k) 
+    knn.fit(x_train, y_train) 
+    pred=knn.predict(x_test) 
+    error.append(np.mean(pred!=y_test))
+
+plt.figure(figsize=(16,9))
+plt.xlabel('Value of K')
+plt.ylabel('Error')
+plt.grid()
+plt.xticks(range(1,41))
+plt.plot(range(1,41),error,marker='.')
+
+knn = KNeighborsClassifier(n_neighbors = 33) 
+
+knn.fit(x_train, y_train) 
+
+y_pred=knn.predict(x_test)
+
+print(classification_report(y_test,y_pred))
+        
