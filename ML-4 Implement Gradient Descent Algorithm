@@ -17,3 +17,6 @@ while precision < previous_step_sizeand iters < max_iter:
     iters += 1
     print('Iteration:', iters, 'Value:', x)
     gd.append(x)
+
+print("Local Minima:", x)
+plr.plot(gd)
