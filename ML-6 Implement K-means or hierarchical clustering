@@ -1,0 +1,85 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+
+df = pd.read_csv("sales_data_sample.csv", encoding ="Latin-1")
+
+
+df.head()
+
+df.shape
+
+df.describe()
+
+df.info()
+
+df.isnull().sum()
+
+df.dtypes
+
+df_drop = ['ADDRESSLINE1', 'ADDRESSLINE2', 'STATUS', 'POSTALCODE', 'CITY']
+
+df = df.drop(df_drop, axis=1)
+
+df.isnull().sum()
+
+df.dtypes
+
+df['COUNTRY'].unique()
+
+df['PRODUCTLINE'].unique()
+
+df['DEALSIZE'].unique()
+
+productline = pd.get_dummies(df['PRODUCTLINE'])
+Dealsize = pd.get_dummies(df['DEALSIZE'])
+
+df = pd.concat([df, productline,Dealsize],axis=1)
+
+df_drop = ['COUNTRY', 'PRODUCTLINE', 'DEALSIZE']
+df = df.drop(df_drop, axis =1 )
+
+df['PRODUCTCODE'] = pd.Categorical(df[ 'PRODUCTCODE']).codes
+
+df.drop('ORDERDATE', axis = 1, inplace=True)
+
+df.dtypes
+
+
+distortions = []
+K = range(1,10)
+for k in K:
+ kmeanModel = KMeans(n_clusters=k)
+ kmeanModel.fit(df)
+ distortions.append(kmeanModel. inertia_) 
+
+plt.figure(figsize=(16,8))
+plt.plot(K, distortions, 'bx-')
+plt.xlabel('K')
+plt.ylabel('Distortion')
+plt.title('The Elbow Method showing the optimal k')
+plt.show()
+
+x_train = df.values
+
+x_train.shape
+
+model = KMeans (n_clusters=3, random_state=2)
+model = model.fit(x_train)
+predictions = model.predict(x_train)
+
+unique, counts = np.unique(predictions, return_counts=True)
+
+
+counts = counts.reshape(1,3)
+
+counts_df = pd.DataFrame(counts, columns=['Cluster', 'Cluster2', 'Cluster3'])
+
+counts_df.head()
+
+pca = PCA(n_components=2)
+reduced_X = pd.DataFrame(pca.fit_transform(x_train), columns=['PCA1', 'PEA
+reduced_X.head()
